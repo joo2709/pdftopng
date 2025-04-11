@@ -9,13 +9,13 @@
       margin: 0;
       overflow: hidden;
       font-family: 'Arial', sans-serif;
-      cursor: url('https://i.imgur.com/XbIGhCy.png'), auto; /* 물방울 커서 */
+      cursor: url('images/water-cursor.png'), auto;
     }
     #game-area {
       position: relative;
       width: 100vw;
       height: 100vh;
-      background: url('https://i.imgur.com/2C9QZCg.jpg') no-repeat center center/cover;
+      background: url('images/mountain.jpg') no-repeat center center/cover;
     }
     .fire {
       position: absolute;
@@ -99,12 +99,6 @@
     const endMessage = document.getElementById('end-message');
     const startButton = document.getElementById('start-button');
 
-    const fireImages = [
-      'https://i.imgur.com/x5E3QqS.png',
-      'https://i.imgur.com/W9Z8NHs.png',
-      'https://i.imgur.com/yixgdWY.png'
-    ];
-
     let score = 0;
     let timeLeft = 60;
     let spawnInterval;
@@ -115,8 +109,7 @@
 
     function spawnFire() {
       const fire = document.createElement('img');
-      const randomSrc = fireImages[Math.floor(Math.random() * fireImages.length)];
-      fire.src = randomSrc;
+      fire.src = 'images/fire1.png';
       fire.className = 'fire';
       fire.style.left = Math.random() * (window.innerWidth - 60) + 'px';
       fire.style.top = Math.random() * (window.innerHeight - 60) + 'px';
