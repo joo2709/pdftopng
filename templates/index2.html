@@ -9,6 +9,7 @@
       margin: 0;
       overflow: hidden;
       font-family: 'Arial', sans-serif;
+      cursor: url('https://i.imgur.com/XbIGhCy.png'), auto; /* 물방울 커서 */
     }
     #game-area {
       position: relative;
@@ -36,7 +37,6 @@
       border-radius: 10px;
       font-size: 18px;
       z-index: 10;
-      margin-bottom: 10px;
     }
     #timer {
       top: 60px;
@@ -52,14 +52,44 @@
       border-radius: 20px;
       text-align: center;
       font-size: 24px;
+      z-index: 20;
+    }
+    #start-button, #donate-button {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 15px 30px;
+      font-size: 20px;
+      background-color: #ff6b6b;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      z-index: 20;
+    }
+    #donate-button {
+      margin-top: 20px;
+      background-color: #4caf50;
+    }
+    @media (max-width: 768px) {
+      #score-board, #timer {
+        font-size: 16px;
+        padding: 8px 12px;
+      }
+      .fire {
+        width: 40px;
+        height: 40px;
+      }
     }
   </style>
 </head>
 <body>
   <div id="game-area">
-    <div id="score-board">🔥 끈 불: 0</div>
-    <div id="timer">⏱ 남은 시간: 60초</div>
+    <div id="score-board" style="display:none;">🔥 끈 불: 0</div>
+    <div id="timer" style="display:none;">⏱ 남은 시간: 60초</div>
     <div id="end-message"></div>
+    <button id="start-button">게임 시작</button>
   </div>
 
   <script>
@@ -67,6 +97,13 @@
     const scoreBoard = document.getElementById('score-board');
     const timerDisplay = document.getElementById('timer');
     const endMessage = document.getElementById('end-message');
+    const startButton = document.getElementById('start-button');
+
+    const fireImages = [
+      'https://i.imgur.com/x5E3QqS.png',
+      'https://i.imgur.com/W9Z8NHs.png',
+      'https://i.imgur.com/yixgdWY.png'
+    ];
 
     let score = 0;
     let timeLeft = 60;
@@ -78,10 +115,11 @@
 
     function spawnFire() {
       const fire = document.createElement('img');
-      fire.src = 'https://i.imgur.com/x5E3QqS.png';
+      const randomSrc = fireImages[Math.floor(Math.random() * fireImages.length)];
+      fire.src = randomSrc;
       fire.className = 'fire';
-      fire.style.left = Math.random() * (window.innerWidth - 50) + 'px';
-      fire.style.top = Math.random() * (window.innerHeight - 50) + 'px';
+      fire.style.left = Math.random() * (window.innerWidth - 60) + 'px';
+      fire.style.top = Math.random() * (window.innerHeight - 60) + 'px';
 
       fire.addEventListener('click', () => {
         fire.remove();
@@ -90,10 +128,20 @@
       });
 
       gameArea.appendChild(fire);
-      setTimeout(() => fire.remove(), 3000); // 자동 제거
+      setTimeout(() => fire.remove(), 3000);
     }
 
     function startGame() {
+      startButton.style.display = 'none';
+      scoreBoard.style.display = 'block';
+      timerDisplay.style.display = 'block';
+      score = 0;
+      timeLeft = 60;
+      updateScore();
+      timerDisplay.textContent = `⏱ 남은 시간: ${timeLeft}초`;
+      endMessage.innerHTML = '';
+      endMessage.style.display = 'none';
+
       const countdown = setInterval(() => {
         timeLeft--;
         timerDisplay.textContent = `⏱ 남은 시간: ${timeLeft}초`;
@@ -101,16 +149,17 @@
           clearInterval(countdown);
           clearInterval(spawnInterval);
           document.querySelectorAll('.fire').forEach(el => el.remove());
-          endMessage.innerHTML = `🎉 당신은 총 <strong>${score}</strong>개의 불을 껐습니다!<br><br>🌱 산불 피해 복구를 위한 기부에 참여해요!`;
+          scoreBoard.style.display = 'none';
+          timerDisplay.style.display = 'none';
+          endMessage.innerHTML = `🎉 당신은 총 <strong>${score}</strong>개의 불을 껐습니다!<br><br>🌱 산불 피해 복구를 위한 기부에 참여해요!<br><a href="https://www.greenkorea.org/" target="_blank"><button id="donate-button">기부하러 가기</button></a>`;
           endMessage.style.display = 'block';
         }
       }, 1000);
 
-      // 1분 동안 총 20개 불 생성
-      spawnInterval = setInterval(spawnFire, 3000); // 3초마다 생성 (60/20)
+      spawnInterval = setInterval(spawnFire, 3000);
     }
 
-    window.onload = startGame;
+    startButton.addEventListener('click', startGame);
   </script>
 </body>
 </html>
